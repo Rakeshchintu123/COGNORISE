@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ping Pong Game</title>
+  <style>
+    canvas {
+      background-color: black;
+      display: block;
+      margin: auto;
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="pingPongCanvas" width="800" height="400"></canvas>
+  <script>
+    const canvas = document.getElementById("pingPongCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // Initial ball position and velocity
+    let ball = {
+      x: canvas.width / 2,
+      y: canvas.height / 2,
+      dx: 2,
+      dy: 2,
+      radius: 10
+    };
+
+    // Paddle properties
+    const paddleHeight = 100;
+    const paddleWidth = 10;
+    let paddleY = (canvas.height - paddleHeight) / 2;
+
+    // Draw paddle
+    function drawPaddle() {
+      ctx.fillStyle = "white";
+      ctx.fillRect(canvas.width - paddleWidth, paddleY, paddleWidth, paddleHeight);
+    }
+
+    // Draw ball
+    function drawBall() {
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+      ctx.fillStyle = "white";
+      ctx.fill();
+      ctx.closePath();
+    }
+
+    // Move ball
+    function moveBall() {
+      ball.x += ball.dx;
+      ball.y += ball.dy;
+
+      // Check collision with walls
+      if (ball.y + ball.dy > canvas.height - ball.radius || ball.y + ball.dy < ball.radius) {
+        ball.dy = -ball.dy;
+      }
+
+      // Check collision with paddle
+      if (ball.x + ball.dx > canvas.width - ball.radius) {
+        if (ball.y > paddleY && ball.y < paddleY + paddleHeight) {
+          ball.dx = -ball.dx;
+        } else {
+          // Game over
+          alert("Game Over!");
+          document.location.reload();
+        }
+      }
+    }
+
+    // Move paddle
+    function movePaddle(event) {
+      const mouseY = event.clientY - canvas.offsetTop;
+      paddleY = mouseY - paddleHeight / 2;
+    }
+
+    // Main function
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawPaddle();
+      drawBall();
+      moveBall();
+      requestAnimationFrame(draw);
+    }
+
+    // Event listener for mouse movement
+    document.addEventListener("mousemove", movePaddle);
+
+    draw(); // Start the game
+  </script>
+</body>
+</html>
